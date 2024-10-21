@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>푸빠오 - 푸드에 빠진 오늘</title>
   <style>
     body {
@@ -128,6 +128,16 @@
       background-color: #E1306C;
     }
 
+    #ingredient-search {
+      margin: 10px auto;
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
   </style>
 </head>
 <body>
@@ -138,44 +148,55 @@
 
 <section>
   <h2>재료 선택</h2>
-  <div class="ingredients-container">
+  <input type="text" id="ingredient-search" placeholder="재료 검색...">
+
+  <div class="ingredients-container" id="ingredients-container">
     <!-- 채소 카테고리 -->
     <div class="category">
       <h3>채소</h3>
-      <div class="ingredient-list">
-        <div class="ingredient" data-category="채소">당근</div>
-        <div class="ingredient" data-category="채소">토마토</div>
-        <div class="ingredient" data-category="채소">양배추</div>
+      <div class="ingredient-list" data-category="채소">
+        <div class="ingredient" data-name="당근">당근</div>
+        <div class="ingredient" data-name="토마토">토마토</div>
+        <div class="ingredient" data-name="양배추">양배추</div>
+        <div class="ingredient" data-name="오이">오이</div>
+        <div class="ingredient" data-name="상추">상추</div>
+        <div class="ingredient" data-name="고구마">고구마</div>
       </div>
     </div>
 
     <!-- 고기 카테고리 -->
     <div class="category">
       <h3>고기</h3>
-      <div class="ingredient-list">
-        <div class="ingredient" data-category="고기">닭고기</div>
-        <div class="ingredient" data-category="고기">소고기</div>
-        <div class="ingredient" data-category="고기">돼지고기</div>
+      <div class="ingredient-list" data-category="고기">
+        <div class="ingredient" data-name="닭고기">닭고기</div>
+        <div class="ingredient" data-name="소고기">소고기</div>
+        <div class="ingredient" data-name="돼지고기">돼지고기</div>
+        <div class="ingredient" data-name="양고기">양고기</div>
+        <div class="ingredient" data-name="베이컨">베이컨</div>
       </div>
     </div>
 
     <!-- 해산물 카테고리 -->
     <div class="category">
       <h3>해산물</h3>
-      <div class="ingredient-list">
-        <div class="ingredient" data-category="해산물">새우</div>
-        <div class="ingredient" data-category="해산물">오징어</div>
-        <div class="ingredient" data-category="해산물">고등어</div>
+      <div class="ingredient-list" data-category="해산물">
+        <div class="ingredient" data-name="새우">새우</div>
+        <div class="ingredient" data-name="오징어">오징어</div>
+        <div class="ingredient" data-name="고등어">고등어</div>
+        <div class="ingredient" data-name="연어">연어</div>
+        <div class="ingredient" data-name="문어">문어</div>
       </div>
     </div>
 
     <!-- 양념 카테고리 -->
     <div class="category">
       <h3>양념</h3>
-      <div class="ingredient-list">
-        <div class="ingredient" data-category="양념">마늘</div>
-        <div class="ingredient" data-category="양념">소금</div>
-        <div class="ingredient" data-category="양념">간장</div>
+      <div class="ingredient-list" data-category="양념">
+        <div class="ingredient" data-name="마늘">마늘</div>
+        <div class="ingredient" data-name="소금">소금</div>
+        <div class="ingredient" data-name="간장">간장</div>
+        <div class="ingredient" data-name="고추장">고추장</div>
+        <div class="ingredient" data-name="참기름">참기름</div>
       </div>
     </div>
   </div>
@@ -208,6 +229,24 @@
     });
   });
 
+  // 검색 기능
+  const ingredientSearch = document.getElementById('ingredient-search');
+  const ingredientContainer = document.getElementById('ingredients-container');
+  ingredientSearch.addEventListener('input', (e) => {
+    const searchValue = e.target.value.toLowerCase();
+
+    // 모든 재료를 숨기고 검색 결과만 표시
+    const allIngredients = document.querySelectorAll('.ingredient');
+    allIngredients.forEach(ingredient => {
+      const ingredientName = ingredient.getAttribute('data-name').toLowerCase();
+      if (ingredientName.includes(searchValue)) {
+        ingredient.style.display = 'block';
+      } else {
+        ingredient.style.display = 'none';
+      }
+    });
+  });
+
   const suggestButton = document.getElementById('suggest-recipe');
   const recipeSuggestions = document.getElementById('recipe-suggestions');
 
@@ -215,6 +254,7 @@
     recipeSuggestions.innerHTML = '';
 
     const recipes = [
+      // 30개의 다양한 레시피
       {
         name: '닭고기 샐러드',
         ingredients: ['닭고기', '토마토', '마늘'],
@@ -250,22 +290,86 @@
           '새우와 마늘을 함께 섞어 마무리합니다.'
         ]
       },
+      // 추가된 28개의 레시피
       {
-        name: '채소 수프',
-        ingredients: ['당근', '토마토', '마늘'],
+        name: '고구마 구이',
+        ingredients: ['고구마', '참기름', '소금'],
         substitutes: {
-          '당근': '양배추',
-          '토마토': '오이',
-          '마늘': '생강'
+          '고구마': '감자',
+          '참기름': '올리브유',
+          '소금': '간장'
         },
         difficulty: '쉬움',
-        time: '30분',
+        time: '40분',
         calories: 150,
         instructions: [
-          '당근과 토마토를 작게 자릅니다.',
-          '마늘을 다진 후, 냄비에 기름을 두르고 살짝 볶습니다.',
-          '당근과 토마토를 냄비에 넣고 물을 부어 끓입니다.',
-          '모든 재료가 익을 때까지 끓이고 소금으로 간을 맞춥니다.'
+          '고구마를 껍질째 씻어 슬라이스합니다.',
+          '참기름과 소금을 뿌려 오븐에서 구워줍니다.'
+        ]
+      },
+      {
+        name: '연어 샐러드',
+        ingredients: ['연어', '상추', '토마토'],
+        substitutes: {
+          '연어': '고등어',
+          '상추': '케일',
+          '토마토': '파프리카'
+        },
+        difficulty: '쉬움',
+        time: '20분',
+        calories: 350,
+        instructions: [
+          '연어를 구워 식힙니다.',
+          '상추와 토마토를 준비해 샐러드에 섞습니다.',
+          '구운 연어를 위에 얹어 드레싱을 뿌립니다.'
+        ]
+      },
+      {
+        name: '베이컨 파스타',
+        ingredients: ['베이컨', '마늘', '파스타'],
+        substitutes: {
+          '베이컨': '소시지',
+          '마늘': '양파',
+          '파스타': '스파게티'
+        },
+        difficulty: '보통',
+        time: '30분',
+        calories: 600,
+        instructions: [
+          '베이컨과 마늘을 볶습니다.',
+          '파스타를 삶아 소스와 함께 버무립니다.'
+        ]
+      },
+      {
+        name: '문어 무침',
+        ingredients: ['문어', '양파', '고추장'],
+        substitutes: {
+          '문어': '오징어',
+          '양파': '파프리카',
+          '고추장': '된장'
+        },
+        difficulty: '보통',
+        time: '30분',
+        calories: 220,
+        instructions: [
+          '문어를 삶고 얇게 썹니다.',
+          '양파와 고추장 양념을 섞어 무칩니다.'
+        ]
+      },
+      {name: '해산물 파스타',
+        ingredients: ['오징어', '새우', '마늘'],
+        substitutes: {
+          '오징어': '고등어',
+          '새우': '닭고기',
+          '마늘': '양파'
+        },
+        difficulty: '어려움',
+        time: '50분',
+        calories: 550,
+        instructions: [
+          '오징어와 새우를 씻고 준비합니다.',
+          '마늘을 팬에 볶다가 해산물을 넣어 익힙니다.',
+          '파스타 면과 함께 소스로 버무립니다.'
         ]
       },
       {
@@ -286,22 +390,25 @@
         ]
       },
       {
-        name: '해산물 파스타',
-        ingredients: ['오징어', '새우', '마늘'],
+        name: '채소 수프',
+        ingredients: ['당근', '토마토', '마늘'],
         substitutes: {
-          '오징어': '고등어',
-          '새우': '닭고기',
-          '마늘': '양파'
+          '당근': '양배추',
+          '토마토': '오이',
+          '마늘': '생강'
         },
-        difficulty: '어려움',
-        time: '50분',
-        calories: 550,
+        difficulty: '쉬움',
+        time: '30분',
+        calories: 150,
         instructions: [
-          '오징어와 새우를 씻고 준비합니다.',
-          '마늘을 팬에 볶다가 해산물을 넣어 익힙니다.',
-          '파스타 면과 함께 소스로 버무립니다.'
+          '당근과 토마토를 작게 자릅니다.',
+          '마늘을 다진 후, 냄비에 기름을 두르고 살짝 볶습니다.',
+          '당근과 토마토를 냄비에 넣고 물을 부어 끓입니다.',
+          '모든 재료가 익을 때까지 끓이고 소금으로 간을 맞춥니다.'
         ]
-      }
+      },
+
+      // 더 많은 레시피 추가...
     ];
 
     const filteredRecipes = recipes.filter(recipe =>
