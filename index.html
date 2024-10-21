@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" IE=edge">
+  <title>푸빠오 - 푸드에 빠진 오늘</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    section {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-bottom: 100px;
+    }
+
+    h3 {
+      margin-top: 20px;
+    }
+
+    .ingredients-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .category {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .ingredient-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ingredient {
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .ingredient.selected {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #suggest-recipe {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    #suggest-recipe:hover {
+      background-color: #45a049;
+    }
+
+    .recipe-suggestions {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .recipe {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    .share-buttons {
+      display: flex;
+      justify-content: flex-start;
+      margin-top: 10px;
+    }
+
+    .share-button {
+      margin-right: 10px;
+      text-decoration: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+    }
+
+    .twitter {
+      background-color: #1DA1F2;
+    }
+
+    .facebook {
+      background-color: #4267B2;
+    }
+
+    .instagram {
+      background-color: #E1306C;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>푸빠오 - 푸드에 빠진 오늘</h1>
+</header>
+
+<section>
+  <h2>재료 선택</h2>
+  <div class="ingredients-container">
+    <!-- 채소 카테고리 -->
+    <div class="category">
+      <h3>채소</h3>
+      <div class="ingredient-list">
+        <div class="ingredient" data-category="채소">당근</div>
+        <div class="ingredient" data-category="채소">토마토</div>
+        <div class="ingredient" data-category="채소">양배추</div>
+      </div>
+    </div>
+
+    <!-- 고기 카테고리 -->
+    <div class="category">
+      <h3>고기</h3>
+      <div class="ingredient-list">
+        <div class="ingredient" data-category="고기">닭고기</div>
+        <div class="ingredient" data-category="고기">소고기</div>
+        <div class="ingredient" data-category="고기">돼지고기</div>
+      </div>
+    </div>
+
+    <!-- 해산물 카테고리 -->
+    <div class="category">
+      <h3>해산물</h3>
+      <div class="ingredient-list">
+        <div class="ingredient" data-category="해산물">새우</div>
+        <div class="ingredient" data-category="해산물">오징어</div>
+        <div class="ingredient" data-category="해산물">고등어</div>
+      </div>
+    </div>
+
+    <!-- 양념 카테고리 -->
+    <div class="category">
+      <h3>양념</h3>
+      <div class="ingredient-list">
+        <div class="ingredient" data-category="양념">마늘</div>
+        <div class="ingredient" data-category="양념">소금</div>
+        <div class="ingredient" data-category="양념">간장</div>
+      </div>
+    </div>
+  </div>
+
+  <button id="suggest-recipe">레시피 추천</button>
+
+  <h2>추천된 레시피</h2>
+  <div class="recipe-suggestions" id="recipe-suggestions">
+    <!-- 추천된 레시피와 공유 버튼이 여기에 나타납니다 -->
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2024-2 도전과 창조 1조 푸빠오</p>
+</footer>
+
+<script>
+  const ingredients = document.querySelectorAll('.ingredient');
+  let selectedIngredients = [];
+
+  ingredients.forEach(ingredient => {
+    ingredient.addEventListener('click', () => {
+      ingredient.classList.toggle('selected');
+      const ingredientName = ingredient.textContent;
+      if (selectedIngredients.includes(ingredientName)) {
+        selectedIngredients = selectedIngredients.filter(item => item !== ingredientName);
+      } else {
+        selectedIngredients.push(ingredientName);
+      }
+    });
+  });
+
+  const suggestButton = document.getElementById('suggest-recipe');
+  const recipeSuggestions = document.getElementById('recipe-suggestions');
+
+  suggestButton.addEventListener('click', () => {
+    recipeSuggestions.innerHTML = '';
+
+    const recipes = [
+      {
+        name: '닭고기 샐러드',
+        ingredients: ['닭고기', '토마토', '마늘'],
+        substitutes: {
+          '닭고기': '소고기',
+          '토마토': '양배추',
+          '마늘': '양파'
+        },
+        difficulty: '쉬움',
+        time: '20분',
+        calories: 300,
+        instructions: [
+          '닭고기를 삶아서 찢습니다.',
+          '토마토를 슬라이스로 자릅니다.',
+          '마늘을 다진 후 팬에 살짝 볶습니다.',
+          '닭고기, 토마토, 마늘을 함께 섞고 소스로 마무리합니다.'
+        ]
+      },
+      {
+        name: '마늘 새우',
+        ingredients: ['새우', '마늘'],
+        substitutes: {
+          '새우': '오징어',
+          '마늘': '양파'
+        },
+        difficulty: '보통',
+        time: '25분',
+        calories: 250,
+        instructions: [
+          '새우의 껍질을 벗기고 씻습니다.',
+          '마늘을 다진 후 팬에 기름을 두르고 볶습니다.',
+          '새우를 팬에 넣고 익을 때까지 조리합니다.',
+          '새우와 마늘을 함께 섞어 마무리합니다.'
+        ]
+      },
+      {
+        name: '채소 수프',
+        ingredients: ['당근', '토마토', '마늘'],
+        substitutes: {
+          '당근': '양배추',
+          '토마토': '오이',
+          '마늘': '생강'
+        },
+        difficulty: '쉬움',
+        time: '30분',
+        calories: 150,
+        instructions: [
+          '당근과 토마토를 작게 자릅니다.',
+          '마늘을 다진 후, 냄비에 기름을 두르고 살짝 볶습니다.',
+          '당근과 토마토를 냄비에 넣고 물을 부어 끓입니다.',
+          '모든 재료가 익을 때까지 끓이고 소금으로 간을 맞춥니다.'
+        ]
+      },
+      {
+        name: '고기 볶음',
+        ingredients: ['소고기', '양배추', '마늘'],
+        substitutes: {
+          '소고기': '돼지고기',
+          '양배추': '당근',
+          '마늘': '파'
+        },
+        difficulty: '보통',
+        time: '40분',
+        calories: 400,
+        instructions: [
+          '소고기를 기름에 볶습니다.',
+          '양배추를 자르고 마늘을 다져 함께 볶습니다.',
+          '모든 재료가 익을 때까지 중불에서 볶아줍니다.'
+        ]
+      },
+      {
+        name: '해산물 파스타',
+        ingredients: ['오징어', '새우', '마늘'],
+        substitutes: {
+          '오징어': '고등어',
+          '새우': '닭고기',
+          '마늘': '양파'
+        },
+        difficulty: '어려움',
+        time: '50분',
+        calories: 550,
+        instructions: [
+          '오징어와 새우를 씻고 준비합니다.',
+          '마늘을 팬에 볶다가 해산물을 넣어 익힙니다.',
+          '파스타 면과 함께 소스로 버무립니다.'
+        ]
+      }
+    ];
+
+    const filteredRecipes = recipes.filter(recipe =>
+      recipe.ingredients.some(ing => selectedIngredients.includes(ing))
+    );
+
+    if (filteredRecipes.length > 0) {
+      filteredRecipes.forEach(recipe => {
+        const recipeDiv = document.createElement('div');
+        recipeDiv.classList.add('recipe');
+        let missingIngredients = recipe.ingredients.filter(ing => !selectedIngredients.includes(ing));
+        let substituteText = '';
+
+        if (missingIngredients.length > 0) {
+          substituteText = `<p>대체 재료: ${missingIngredients.map(ing => `${ing} 대신 ${recipe.substitutes[ing]}`).join(', ')}</p>`;
+        }
+
+        recipeDiv.innerHTML = `
+                        <h3>${recipe.name}</h3>
+                        <p>재료: ${recipe.ingredients.join(', ')}</p>
+                        ${substituteText}
+                        <p>난이도: ${recipe.difficulty}</p>
+                        <p>조리 시간: ${recipe.time}</p>
+                        <p>칼로리: ${recipe.calories} kcal</p>
+                        <h4>조리법:</h4>
+                        <ol>
+                            ${recipe.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                        </ol>
+                        <div class="share-buttons">
+                            <a href="#" class="share-button facebook" data-url="https://yourwebsite.com/${recipe.name.replace(/\s+/g, '-').toLowerCase()}" data-title="${recipe.name} 레시피">Facebook에서 공유</a>
+                            <a href="#" class="share-button twitter" data-url="https://yourwebsite.com/${recipe.name.replace(/\s+/g, '-').toLowerCase()}" data-title="${recipe.name} 레시피">Twitter에서 공유</a>
+                            <a href="#" class="share-button instagram" data-url="https://yourwebsite.com/${recipe.name.replace(/\s+/g, '-').toLowerCase()}" data-title="${recipe.name} 레시피">Instagram에서 공유</a>
+                        </div>
+                    `;
+        recipeSuggestions.appendChild(recipeDiv);
+      });
+
+      const shareButtons = document.querySelectorAll('.share-button');
+
+      shareButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+
+          const url = button.getAttribute('data-url');
+          const title = button.getAttribute('data-title');
+
+          if (button.classList.contains('facebook')) {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&t=${encodeURIComponent(title)}`, '_blank');
+          } else if (button.classList.contains('twitter')) {
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+          } else if (button.classList.contains('instagram')) {
+            alert("Instagram에서 공유하려면 링크를 복사하여 프로필에 붙여넣으세요.");
+          }
+        });
+      });
+    } else {
+      recipeSuggestions.innerHTML = '<p>선택된 재료에 맞는 레시피가 없습니다.</p>';
+    }
+  });
+</script>
+
+</body>
+</html>
